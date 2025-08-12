@@ -52,3 +52,24 @@ td {
   padding: 15px;
   border: 1px solid black;
 }
+
+.actionButtons {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: none;
+  gap: 1rem;
+  flex-direction: column;
+}
+
+.editBtn {
+  background-color: green;
+  padding: 10px;
+  color: white;
+}
+
+.deleteBtn {
+  background-color: red;
+  color: white;
+  padding: 10px;
+}

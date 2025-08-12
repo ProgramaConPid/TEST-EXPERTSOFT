@@ -3,15 +3,15 @@ import csv from "csv-parser";
 import { connection } from "../db.js";
 
 // Funtcion in charge to load CSV file to DB 
-export async function loadCSVtoDB(filePath) {
+export async function loadCSVTransactionsToDB(filePath) {
   try {
-    // Verify if exists customers in the table
+    // Verify if exists invoices data in the table
     const [rows] = await connection.promise().query(
-      "SELECT COUNT(*) AS count FROM customers"
+      "SELECT COUNT(*) AS count FROM transactions"
     );
 
     if (rows[0].count > 0) {
-      console.log("the client table already has data, the CSV is not loaded.");
+      console.log("the transactions table already has data, the CSV is not loaded.");
       return;
     }
 
@@ -24,8 +24,8 @@ export async function loadCSVtoDB(filePath) {
           await connection
             .promise()
             .query(
-              "INSERT INTO customers (client_id, full_name, identification_number, address, phone, email) VALUES (?, ?, ?, ?, ?, ?)",
-              [row.client_id,row.full_name, row.identification_number, row.address, row.phone, row.email]
+              "INSERT INTO transactions (transaction_id, transaction_datetime, transaction_amount, transaction_status, transaction_type, platform, invoice_id) VALUES (?, ?, ?, ?, ?, ?, ?)",
+              [row.transaction_id,row.transaction_datetime, row.transaction_amount, row.transaction_status, row.transaction_type, row.platform, row.invoice_id]
             );
         } catch (err) {
           console.error("Error inserting row:", err);
@@ -37,4 +37,4 @@ export async function loadCSVtoDB(filePath) {
   } catch (err) {
     console.error("Error verifying existing data:", err);
   }
-}
+};

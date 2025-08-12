@@ -3,15 +3,15 @@ import csv from "csv-parser";
 import { connection } from "../db.js";
 
 // Funtcion in charge to load CSV file to DB 
-export async function loadCSVtoDB(filePath) {
+export async function loadCSVInvoicesToDB(filePath) {
   try {
     // Verify if exists customers in the table
     const [rows] = await connection.promise().query(
-      "SELECT COUNT(*) AS count FROM customers"
+      "SELECT COUNT(*) AS count FROM invoices"
     );
 
     if (rows[0].count > 0) {
-      console.log("the client table already has data, the CSV is not loaded.");
+      console.log("the invoices table already has data, the CSV is not loaded.");
       return;
     }
 
@@ -24,8 +24,8 @@ export async function loadCSVtoDB(filePath) {
           await connection
             .promise()
             .query(
-              "INSERT INTO customers (client_id, full_name, identification_number, address, phone, email) VALUES (?, ?, ?, ?, ?, ?)",
-              [row.client_id,row.full_name, row.identification_number, row.address, row.phone, row.email]
+              "INSERT INTO invoices (invoice_id, billed_number, billing_period, billed_amount, paid_amount, client_id) VALUES (?, ?, ?, ?, ?, ?)",
+              [row.invoice_id,row.billed_number, row.billing_period, row.billed_amount, row.paid_amount, row.client_id]
             );
         } catch (err) {
           console.error("Error inserting row:", err);
@@ -37,4 +37,4 @@ export async function loadCSVtoDB(filePath) {
   } catch (err) {
     console.error("Error verifying existing data:", err);
   }
-}
+};

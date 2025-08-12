@@ -24,6 +24,7 @@
               <th>CUSTOMER ADDRESS</th>
               <th>CUSTOMER PHONE</th>
               <th>CUSTOMER EMAIL</th>
+              <th>CUSTOMER ACTIONS</th>
             </tr>
           </thead>
           <tbody id="userTableBody">
@@ -34,6 +35,8 @@
     </div>
 
     <script>
+
+      // Show all the customers from the Database
       async function loadUsers() {
       const res = await fetch("/customers");
       if (!res.ok) {
@@ -45,20 +48,35 @@
       const tbody = document.getElementById("userTableBody");
       tbody.innerHTML = customers.map(c => `
         <tr>
-          <td>${c.client_id}<td>
-          <td>${c.full_name}<td>
-          <td>${c.identification_number}<td>
-          <td>${c.address}<td>
-          <td>${c.phone}<td>
-          <td>${c.email}<td>
-          <td>
-            <button>Modify</button>
-            <button>Delete</button>  
-          <td>
+          <td>${c.client_id}</td>
+          <td>${c.full_name}</td>
+          <td>${c.identification_number}</td>
+          <td>${c.address}</td>
+          <td>${c.phone}</td>
+          <td>${c.email}</td>
+          <td class="actionButtons">
+            <button class="editBtn">Modify</button>
+            <button class="deleteBtn" data-id="${c.client_id}">Delete</button>  
+          </td>
         </tr>
       `).join("");
-      }
+      };
 
+      document.querySelectorAll(".deleteBtn").forEach(btn => {
+        btn.addEventListener("click", async () => {
+          const userId = btn.getAttribute("data-id");
+          if (confirm("¿Are you sure want to delete this user?")) {
+            const res = await fetch(`/customers/${userId}`, { method: "DELETE" });
+            if (res.ok) {
+              loadUsers();
+              alert("Customer deleted successfully");
+            } else {
+              alert("Error deleting the customer");
+            }
+          }
+        });
+      });
+    
       loadUsers();
     </script>
   </body>

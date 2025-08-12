@@ -10,4 +10,20 @@ router.get('/', (req, res) => {
   })
 })
 
+router.delete("/:id", (req, res) => {
+  const { id } = req.params;
+
+  connection.query(
+    "DELETE FROM customers WHERE client_id = ?",
+    [id],
+    (err, result) => {
+      if (err) return res.status(500).json({ message: err.message });
+      if (result.affectedRows === 0) {
+        return res.status(404).json({ message: "Customer not found" });
+      }
+      res.json({ message: "Customer deleted successfully" });
+    }
+  );
+});
+
 export default router;
