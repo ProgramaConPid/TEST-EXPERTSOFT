@@ -12,7 +12,6 @@ body {
   width: 90%;
   max-width: 1200px;
   margin: 0 auto;
-  overflow: hidden;
   margin-top: 1.5rem;
   text-align: center;
   display: grid;
@@ -47,4 +46,9 @@ table, tr, th {
 th {
   color: white;
   background-color: #74D4FF;
+}
+
+td {
+  padding: 15px;
+  border: 1px solid black;
 }

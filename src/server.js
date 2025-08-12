@@ -1,6 +1,7 @@
 import express from 'express';
 import path from 'path';
-import { connection } from './db.js'
+import { loadCSVtoDB } from './utils/csvLoader.js';
+import customersRoutes from './routes/customerRoutes.js'
 
 // Settings
 const app = express();
@@ -12,20 +13,18 @@ app.use(express.json());
 app.use(express.static(path.join(process.cwd(), 'src', 'views')));
 
 // Endpoints
+app.use('/customers', customersRoutes)
 
-// Get customers from database
-app.get('/customers', (req, res) => {
-  connection.query('SELECT * FROM customers', (err, results) => {
-    if (err) throw err;
-    res.json(results)
-  })
-});
-
-app.post('/customers/', (req, res) => {
-  const { name, identification, address, phone, email } = req.body;
-})
+// default CSV Customers file for charge
+const defaultCSV = path.join(process.cwd(), "src", "data", "customers.csv");
 
 // Starting the server
-app.listen(PORT, () => {
+app.listen(PORT, async () => {
   console.log('Server running on port', PORT)
+  try {
+    await loadCSVtoDB(defaultCSV)
+    console.log('Data uploaded successfully')
+  } catch(err) {
+    console.log("ERROR, Data can not upload", err.message)
+  }
 });

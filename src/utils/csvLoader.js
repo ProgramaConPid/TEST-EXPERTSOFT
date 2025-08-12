@@ -1,6 +1,6 @@
 import fs from "fs";
 import csv from "csv-parser";
-import { connection } from "./db.js";
+import { connection } from "../db.js";
 
 // Funtcion in charge to load CSV file to DB 
 export async function loadCSVtoDB(filePath) {
@@ -24,8 +24,8 @@ export async function loadCSVtoDB(filePath) {
           await connection
             .promise()
             .query(
-              "INSERT INTO customers (full_name, identification_number, address, phone, email) VALUES (?, ?, ?, ?, ?)",
-              [row.full_name, row.identification_number, row.address, row.phone, row.email]
+              "INSERT INTO customers (client_id, full_name, identification_number, address, phone, email) VALUES (?, ?, ?, ?, ?, ?)",
+              [row.cliend_id,row.full_name, row.identification_number, row.address, row.phone, row.email]
             );
         } catch (err) {
           console.error("Error inserting row:", err);

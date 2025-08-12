@@ -2,7 +2,7 @@ CREATE DATABASE db_juan_marin_linus;
 USE db_juan_marin_linus;
 
 CREATE TABLE customers (
-  client_id UNIQUE INT AUTO_INCREMENT PRIMARY KEY,
+  client_id INT AUTO_INCREMENT PRIMARY KEY,
   full_name VARCHAR(100) NOT NULL,
   identification_number VARCHAR(10) NOT NULL,
   address VARCHAR(100) NOT NULL,
@@ -11,7 +11,7 @@ CREATE TABLE customers (
 );
 
 CREATE TABLE invoices (
-  invoice_id UNIQUE INT AUTO_INCREMENT PRIMARY KEY,
+  invoice_id INT AUTO_INCREMENT PRIMARY KEY,
   billed_number VARCHAR(50) NOT NULL,
   billing_period VARCHAR(20) NOT NULL,
   billed_amount DECIMAL NOT NULL,
@@ -21,7 +21,7 @@ CREATE TABLE invoices (
 );
 
 CREATE TABLE transactions (
-  transaction_id UNIQUE INT AUTO_INCREMENT PRIMARY KEY,
+  transaction_id INT AUTO_INCREMENT PRIMARY KEY,
   transaction_datetime DATE NOT NULL,
   transaction_amount INT NOT NULL,
   transaction_status VARCHAR(50) NOT NULL,

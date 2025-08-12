@@ -1,2 +1,0 @@
-# DER model explanation
-
