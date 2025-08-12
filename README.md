@@ -77,6 +77,10 @@ TEST-EXPERTSOFT/
 
 ---
 
+# 📊 How was implemented the normalization
+
+basically, the normalization of the data.xlsx file was based on breaking down the complete table into other tables that include the attributes according to it and the respective data and corresponding relationships for the smooth flow of queries. Thanks to this process, 3 .csv files could be extracted. to later populate the database in question.
+
 ## 🗄 Explanation of the MER (Entity-Relationship Model)
 
 The MER diagram (`MER-ExpertSoft.drawio.png`) visualizes the normalized relational schema:

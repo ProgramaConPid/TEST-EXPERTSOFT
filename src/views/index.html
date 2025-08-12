@@ -14,6 +14,7 @@
     <div class="container">
       <h1>Dahshboard Customers</h1>
 
+      <!-- Contain all the customers -->
       <div class="container__data">
         <table class="customers__data">
           <thead>
@@ -34,8 +35,21 @@
       </div>
     </div>
 
-    <script>
+    <!-- Modal to modify customer -->
+    <div id="editModal" class="modal">
+      <div class="modal-content">
+        <span id="closeModal" class="close">&times;</span>
+        <h3>Editar customer</h3>
+        <input type="text" id="name" placeholder="Name" />
+        <input type="number" id="identification" placeholder="Identification" />
+        <input type="address" id="address" placeholder="Address" />
+        <input type="phone" id="phone" placeholder="Phone" />
+        <input type="email" id="email" placeholder="Email" />
+        <button id="saveEditBtn" class="edit-btn">Save changes</button>
+      </div>
+    </div>
 
+    <script>
       // Show all the customers from the Database
       async function loadUsers() {
       const res = await fetch("/customers");
@@ -55,13 +69,71 @@
           <td>${c.phone}</td>
           <td>${c.email}</td>
           <td class="actionButtons">
-            <button class="editBtn">Modify</button>
+            <button 
+            class="editBtn" 
+            data_id="${c.client_id}"
+            data_name="${c.full_name}"
+            data_identification="${c.identification_number}"
+            data_address="${c.address}"
+            data_phone="${c.phone}"
+            data_email="${c.email}">
+              Modify
+            </button>
             <button class="deleteBtn" data-id="${c.client_id}">Delete</button>  
           </td>
         </tr>
       `).join("");
       };
 
+      // Open modal to modify the customer
+      document.querySelectorAll(".editBtn").forEach(btn => {
+        btn.addEventListener("click", () => {
+          currentEditId = btn.getAttribute("data-id");
+          document.getElementById("name").value = btn.getAttribute("data_name");
+          document.getElementById("identification").value = btn.getAttribute("data_identification");
+          document.getElementById("address").value = btn.getAttribute("data_address");
+          document.getElementById("phone").value = btn.getAttribute("data_phone");
+          document.getElementById("email").value = btn.getAttribute("data_email");
+          document.getElementById("editModal").style.display = "block";
+        });
+      });
+
+      // Modify the customer from DOM and database
+      document.getElementById("saveEditBtn").addEventListener("click", async () => {
+        const name = document.getElementById("name").value.trim();
+        const identification = document.getElementById("identification").value.trim();
+        const address = document.getElementById("address").value.trim();
+        const phone = document.getElementById("phone").value.trim();
+        const email = document.getElementById("email").value.trim();
+        if (!name || !identification || !address || !phone || !email) return alert("Every field is required");
+
+        const res = await fetch(`/customers/${currentEditId}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ name, identification, address, phone, email })
+        });
+
+        if (res.ok) {
+          document.getElementById("editModal").style.display = "none";
+          loadUsers();
+        } else {
+          alert("Error to update the customer");
+        }
+      });
+
+      // Close the modal
+      document.getElementById("closeModal").addEventListener("click", () => {
+        document.getElementById("editModal").style.display = "none";
+      });
+
+      // Close the modal if the user click out of the window modal
+      window.addEventListener("click", (e) => {
+        if (e.target == document.getElementById("editModal")) {
+          document.getElementById("editModal").style.display = "none";
+        }
+      });
+
+      // Delete customer from the DOM and database
       document.querySelectorAll(".deleteBtn").forEach(btn => {
         btn.addEventListener("click", async () => {
           const userId = btn.getAttribute("data-id");
