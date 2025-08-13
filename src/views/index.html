@@ -28,9 +28,7 @@
               <th>CUSTOMER ACTIONS</th>
             </tr>
           </thead>
-          <tbody id="userTableBody">
-
-          </tbody>
+          <tbody id="userTableBody"></tbody>
         </table>
       </div>
     </div>
@@ -52,103 +50,127 @@
     <script>
       // Show all the customers from the Database
       async function loadUsers() {
-      const res = await fetch("/customers");
-      if (!res.ok) {
-        alert("Error charging the customers.")
-      }
+        const res = await fetch("/customers");
+        if (!res.ok) {
+          alert("Error charging the customers.");
+          return;
+        }
 
-      const customers = await res.json();
+        const customers = await res.json();
 
-      const tbody = document.getElementById("userTableBody");
-      tbody.innerHTML = customers.map(c => `
-        <tr>
-          <td>${c.client_id}</td>
-          <td>${c.full_name}</td>
-          <td>${c.identification_number}</td>
-          <td>${c.address}</td>
-          <td>${c.phone}</td>
-          <td>${c.email}</td>
-          <td class="actionButtons">
-            <button 
-            class="editBtn" 
-            data_id="${c.client_id}"
-            data_name="${c.full_name}"
-            data_identification="${c.identification_number}"
-            data_address="${c.address}"
-            data_phone="${c.phone}"
-            data_email="${c.email}">
-              Modify
-            </button>
-            <button class="deleteBtn" data-id="${c.client_id}">Delete</button>  
-          </td>
-        </tr>
-      `).join("");
-      };
+        const tbody = document.getElementById("userTableBody");
+        tbody.innerHTML = customers
+          .map(
+            (c) => `
+          <tr>
+            <td>${c.client_id}</td>
+            <td>${c.full_name}</td>
+            <td>${c.identification_number}</td>
+            <td>${c.address}</td>
+            <td>${c.phone}</td>
+            <td>${c.email}</td>
+            <td class="actionButtons">
+              <button 
+              class="editBtn" 
+              data-id="${c.client_id}"
+              data-name="${c.full_name}"
+              data-identification="${c.identification_number}"
+              data-address="${c.address}"
+              data-phone="${c.phone}"
+              data-email="${c.email}">
+                Modify
+              </button>
+              <button class="deleteBtn" data-id="${c.client_id}">Delete</button>  
+            </td>
+          </tr>
+        `
+          )
+          .join("");
 
-      // Open modal to modify the customer
-      document.querySelectorAll(".editBtn").forEach(btn => {
-        btn.addEventListener("click", () => {
-          currentEditId = btn.getAttribute("data-id");
-          document.getElementById("name").value = btn.getAttribute("data_name");
-          document.getElementById("identification").value = btn.getAttribute("data_identification");
-          document.getElementById("address").value = btn.getAttribute("data_address");
-          document.getElementById("phone").value = btn.getAttribute("data_phone");
-          document.getElementById("email").value = btn.getAttribute("data_email");
-          document.getElementById("editModal").style.display = "block";
-        });
-      });
-
-      // Modify the customer from DOM and database
-      document.getElementById("saveEditBtn").addEventListener("click", async () => {
-        const name = document.getElementById("name").value.trim();
-        const identification = document.getElementById("identification").value.trim();
-        const address = document.getElementById("address").value.trim();
-        const phone = document.getElementById("phone").value.trim();
-        const email = document.getElementById("email").value.trim();
-        if (!name || !identification || !address || !phone || !email) return alert("Every field is required");
-
-        const res = await fetch(`/customers/${currentEditId}`, {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ name, identification, address, phone, email })
+        // Open modal to modify the customer
+        document.querySelectorAll(".editBtn").forEach((btn) => {
+          btn.addEventListener("click", () => {
+            currentEditId = btn.getAttribute("data-id");
+            document.getElementById("name").value =
+              btn.getAttribute("data-name");
+            document.getElementById("identification").value = btn.getAttribute(
+              "data-identification"
+            );
+            document.getElementById("address").value =
+              btn.getAttribute("data-address");
+            document.getElementById("phone").value =
+              btn.getAttribute("data-phone");
+            document.getElementById("email").value =
+              btn.getAttribute("data-email");
+            document.getElementById("editModal").style.display = "block";
+          });
         });
 
-        if (res.ok) {
-          document.getElementById("editModal").style.display = "none";
-          loadUsers();
-        } else {
-          alert("Error to update the customer");
-        }
-      });
+        // Modify the customer from DOM and database
+        document
+          .getElementById("saveEditBtn")
+          .addEventListener("click", async () => {
+            const name = document.getElementById("name").value.trim();
+            const identification = document
+              .getElementById("identification")
+              .value.trim();
+            const address = document.getElementById("address").value.trim();
+            const phone = document.getElementById("phone").value.trim();
+            const email = document.getElementById("email").value.trim();
+            if (!name || !identification || !address || !phone || !email)
+              return alert("Every field is required");
 
-      // Close the modal
-      document.getElementById("closeModal").addEventListener("click", () => {
-        document.getElementById("editModal").style.display = "none";
-      });
+            const res = await fetch(`/customers/${currentEditId}`, {
+              method: "PUT",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                name,
+                identification,
+                address,
+                phone,
+                email,
+              }),
+            });
 
-      // Close the modal if the user click out of the window modal
-      window.addEventListener("click", (e) => {
-        if (e.target == document.getElementById("editModal")) {
-          document.getElementById("editModal").style.display = "none";
-        }
-      });
-
-      // Delete customer from the DOM and database
-      document.querySelectorAll(".deleteBtn").forEach(btn => {
-        btn.addEventListener("click", async () => {
-          const userId = btn.getAttribute("data-id");
-          if (confirm("¿Are you sure want to delete this user?")) {
-            const res = await fetch(`/customers/${userId}`, { method: "DELETE" });
             if (res.ok) {
+              document.getElementById("editModal").style.display = "none";
               loadUsers();
-              alert("Customer deleted successfully");
             } else {
-              alert("Error deleting the customer");
+              alert("Error to update the customer");
             }
+          });
+
+        // Close the modal
+        document.getElementById("closeModal").addEventListener("click", () => {
+          document.getElementById("editModal").style.display = "none";
+        });
+
+        // Close the modal if the user click out of the window modal
+        window.addEventListener("click", (e) => {
+          if (e.target == document.getElementById("editModal")) {
+            document.getElementById("editModal").style.display = "none";
           }
         });
-      });
-    
+
+        // Delete customer from the DOM and database
+        document.querySelectorAll(".deleteBtn").forEach((btn) => {
+          btn.addEventListener("click", async () => {
+            const userId = btn.getAttribute("data-id");
+            if (confirm("¿Are you sure want to delete this user?")) {
+              const res = await fetch(`/customers/${userId}`, {
+                method: "DELETE",
+              });
+              if (res.ok) {
+                loadUsers();
+                alert("Customer deleted successfully");
+              } else {
+                alert("Error deleting the customer");
+              }
+            }
+          });
+        });
+      }
+
       loadUsers();
     </script>
   </body>
